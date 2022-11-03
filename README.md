@@ -1,2 +1,2 @@
-# app-marvel-with-react
-app-marvel-with-react
+# app-marvel-with-angular
+app-marvel-with-angular
