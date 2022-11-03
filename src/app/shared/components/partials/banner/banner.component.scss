@@ -1,0 +1,56 @@
+@import 'src/assets/variables.scss';
+
+.container-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    div {
+        padding: 3px;
+        font-size: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    img {
+        height: 35px;
+    }
+    span {
+        padding: 0 5px;
+        background-color: $color-white;
+        color: $color-primary;
+        border-radius: 2px;
+        margin: 0 5px;
+    }
+}
+
+
+#app-title {
+  margin-top: 1.8em;
+  margin-bottom: 1.9em;
+  // width: 318.45px;
+}
+
+@keyframes filling {
+  from{
+    background-position: center 25%;
+  }
+  to {
+    background-position: center 50%;
+  }
+}
+
+.container-text {
+  background-image:  url('http://i.annihil.us/u/prod/marvel/i/mg/6/80/622f4fc90745a.jpg');
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color:  #FFFFFF;
+  // padding-top: 130px;
+  // padding-left: 250px;
+  // position: center;
+  font-size: 170px;
+  height: 300px;
+  font-family: 'Bungee', cursive;
+  animation: filling 3s ease forwards;
+  align-items: center;
+}

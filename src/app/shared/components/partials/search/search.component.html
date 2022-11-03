@@ -1,0 +1,8 @@
+<div class="sm:flex sm:items-center">
+  <div class="sm:flex-auto">
+    <mat-form-field appearance="standard">
+      <mat-label>Buscar...</mat-label>
+      <input matInput search (keyup)="applyFilter($event)" placeholder="Buscar" #input>
+    </mat-form-field>
+  </div>
+</div>
