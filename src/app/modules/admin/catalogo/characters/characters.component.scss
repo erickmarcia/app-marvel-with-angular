@@ -1,1 +1,19 @@
+@keyframes filling {
+  from{
+    background-position: center 25%;
+  }
+  to {
+    background-position: center 50%;
+  }
+}
 
+.container-text {
+  background-image:  url(http://i.annihil.us/u/prod/marvel/i/mg/c/e0/535fecbbb9784.jpg);
+  -webkit-text-fill-color: transparent;
+   -webkit-background-clip: text;
+  color:  #FFFFFF;
+  padding-top: 20px;
+  font-size: 170px;
+  font-family: 'Bungee', cursive;
+  animation: filling 3s ease forwards;
+}

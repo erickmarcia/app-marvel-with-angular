@@ -2,8 +2,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { debounceTime, distinctUntilChanged, fromEvent, map, Subject } from 'rxjs';
-import { Category } from 'src/app/models/request.model';
+import { debounceTime, distinctUntilChanged, fromEvent, map, Subject, switchMap } from 'rxjs';
+import { Category, MarvelRequestOptions } from 'src/app/models/request.model';
 import { CatalogoService } from '../services/catalogo.service';
 
 @Component({
@@ -15,8 +15,15 @@ export class ComicsComponent implements AfterViewInit {
 
   category: Category = 'comics';
   public dataSource: Array<any> = [];
+  characters: any[] = [];
+  character: any;
+  notFound = false;
+  modal: any;
+  options!: MarvelRequestOptions;
+
   public offset: any = '0';
   public limit: any = '100';
+
   @ViewChild('searchInput')
   inputSearch?: ElementRef;
   searchText$ = new Subject<string>();
@@ -43,21 +50,16 @@ export class ComicsComponent implements AfterViewInit {
   }
 
    ngOnInit(): void {
-    this._service.getComics('Avengers',this.offset, this.limit).subscribe((res) => {
-       this.dataSource = res.data.results;
-    });
+        this.text ='';
+        this._service.emitText(this.text);
 
-    //  this._service.textObservable.subscribe();
-       this._service.textObservable.subscribe(text =>{
+       this.getItem();
+
+        this._service.textObservable.subscribe(text =>{
         this.text = text;
         this.filter(text);
     } )
 
-  }
-
- applyFilter(event:Event)
-  {
-    const  filterValue = (event.target as HTMLInputElement).value;
   }
 
   total(data: any, price: any){
@@ -76,10 +78,11 @@ export class ComicsComponent implements AfterViewInit {
       return (total)
     }
 
-      filter(characters: string)
+  filter(characters: string)
   {
-        this.text =characters
-        console.log(this.text);
+        this.text = characters
+        // console.log(this.text);
+
         if(characters !=='' && characters.length >= 2){
             this.getItemStartWith(this.text);
         }
@@ -89,43 +92,35 @@ export class ComicsComponent implements AfterViewInit {
         }
   }
 
-    private getItemStartWith(startwith: string)
+   private getItemStartWith(startwith: string)
   {
-    this._service.getCharacters(this.category,startwith,this.offset, this.limit).subscribe((res) => {
-      // this.dataSource = res.data.results;
-       this.dataSource = res.data.results;
-       //  console.log('Respuesta', res);
-    });
-
-    console.log(this.dataSource);
-    // this._service.findNameStartWith(offset, 1000, startwith).subscribe(r => {
-    //   this.response = r
-    // })
-    //     this._service.getData('characters', this.text).subscribe(data => {
-    //      this.response = data
-    // })
-
-    // this._service.getCharacters(this.category, startwith, this.offset, this.limit).subscribe(data => this.handleResponse(data, true));
-
-    // this.searchText$.pipe(
-    //   debounceTime(400),
-    //   distinctUntilChanged(),
-    //   switchMap(() => this._service.getData(this.category, this.options))).subscribe(data => {this.handleResponse(data, true)
-    //    //this.dataSource = new MatTableDataSource(data?.results);
-    //     this.dataSource = data?.results;
-    //     console.log(this.dataSource);
-    //   });
-
-  }
-
-    private getItem()
-  {
-        this._service.getComics('Avengers',this.offset, this.limit).subscribe((res) => {
+                this._service.getListComics(startwith,this.offset, this.limit).subscribe((res) => {
        this.dataSource = res.data.results;
     });
 
+      this.searchText$.pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap(() => this._service.getData(this.category, this.options))).subscribe(data => {this.handleResponse(data, true)
+          // console.log(this.dataSource);
+        });
+
+    }
+
+  private getItem()
+  {
+
+     this._service.getComics(this.category,'',this.offset, this.limit).subscribe((res) => {
+      this.dataSource = res.data.results;
+    });
 
   }
 
+        handleResponse(data: any, reset: boolean = false) {
+      this.characters = reset ? data.results : [...this.characters, ...data.results];
+      this.total = data.total;
+      this.options.offset = this.options.offset || data.offset;
+      this.notFound = !!!data.results.length;
+  }
 
 }
